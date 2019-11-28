@@ -402,10 +402,68 @@ CREATE TABLE migration_tr.tr_hts_retest as
   FROM migration_st.st_hts_retest where TestType = "Repeat Test";
   
   -- 6. HTS Client Tracing transformed table
+  
+
+DROP TABLE IF EXISTS migration_tr.st_hts_tracing;
+CREATE TABLE migration_tr.st_hts_tracing as
+  select
+    Person_Id,
+    Encounter_Date,
+    Encounter_ID,
+        (case Contact_Type
+				when "Physical" then 1650
+				when "Phone" then 164965
+                else ""  end
+	)as Contact_Type,
+    (case Contact_Outcome
+				when "Not Contacted" then 1118
+				when "Contacted and Linked" then 1065
+				when "Contacted" then 1066
+                else ""  end
+	)as Contact_Outcome,
+    Reason_uncontacted
+  FROM migration_st.st_hts_tracing
+
 
 -- 7. HTS Client Referral transformed table
 
+DROP TABLE IF EXISTS migration_tr.st_hts_referral;
+CREATE TABLE migration_tr.st_hts_referral as
+  select
+    Person_Id,
+    Encounter_Date,
+    Encounter_ID,
+	Facility_Referred,
+    Date_To_Be_Enrolled,
+    Remarks
+  FROM migration_st.st_hts_referral;
+
+
 -- 8. HTS Client Linkage transformed table
+
+DROP TABLE IF EXISTS migration_tr.tr_hts_linkage;
+CREATE TABLE migration_tr.tr_hts_linkage as
+  select
+    Person_Id,
+    Encounter_Date,
+    Encounter_ID,
+	Facility_Linked,
+    CCC_Number,
+    Health_Worker_Handed_To,
+	(case Cadre 
+				when "adherence" then 1577 
+                when "counselor" then 1574 
+                when "Nurse" then 1577 
+                when "Clinical Officer/Doctor" then 1574 
+                when "Community Health Worker" then 1555 
+                when "Employee" then 1540 
+                when "Other" then 5622 
+                else ""  end )as Cadre,
+    Date_Enrolled,
+    ART_Start_Date,
+    Remarks
+  FROM migration_st.st_hts_linkage;
+
 
 -- 9. HTS Contact Listing transformed table
 
